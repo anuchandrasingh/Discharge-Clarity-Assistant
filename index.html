@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discharge Clarity Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Healthcare Hackathon MVP</p>
+          <h1>Discharge Clarity Assistant</h1>
+          <p class="hero-text">
+            Turn dense discharge paperwork into a patient-friendly care plan with
+            simple instructions, medication timing, follow-up reminders, and
+            red-flag alerts.
+          </p>
+          <div class="hero-actions">
+            <button id="load-sample" class="primary-btn">Load Sample Case</button>
+            <button id="run-demo" class="ghost-btn">Run Best Demo</button>
+            <button id="analyze-top" class="ghost-btn">Generate Care Plan</button>
+            <button id="print-plan-top" class="ghost-btn">Print Care Plan</button>
+            <button id="speak-plan-top" class="ghost-btn">Read Aloud</button>
+            <button id="copy-summary-top" class="ghost-btn">Copy Summary</button>
+            <button id="download-summary-top" class="ghost-btn">Export PDF</button>
+          </div>
+          <label class="field-label" for="sample-case-select">Demo case</label>
+          <select id="sample-case-select">
+            <option value="regular-checkup">Primary Care - Regular Checkup</option>
+            <option value="stomach-infection">Primary Care - Stomach Infection</option>
+            <option value="hypertension-followup">Cardiology / Primary Care - Hypertension Follow-up</option>
+            <option value="heart-failure">Cardiology - Heart Failure Follow-up</option>
+            <option value="coronavirus">Respiratory - Coronavirus Recovery</option>
+            <option value="pneumonia">Respiratory - Pneumonia Recovery</option>
+            <option value="asthma-flare">Pulmonology - Asthma Flare</option>
+            <option value="ear-infection">ENT - Ear Infection Visit</option>
+            <option value="pregnancy-followup">OB-GYN - Pregnancy Follow-up</option>
+            <option value="dental-visit">Dental - Dental Visit</option>
+            <option value="dermatology-rash">Dermatology - Rash Visit</option>
+            <option value="orthopedic-injury">Orthopedics - Orthopedic Injury</option>
+            <option value="sports-injury">Sports Medicine - Sports Injury</option>
+            <option value="migraine-visit">Neurology - Migraine Visit</option>
+            <option value="mental-health">Behavioral Health - Mental Health Visit</option>
+            <option value="diabetes-management">Endocrinology - Diabetes Management</option>
+            <option value="kidney-stone">Urology - Kidney Stone Visit</option>
+            <option value="eye-irritation">Ophthalmology - Eye Irritation Visit</option>
+          </select>
+          <p id="api-status" class="api-status">Server not called yet</p>
+          <div class="hero-stats">
+            <article>
+              <strong>15+</strong>
+              <span>patient-friendly outputs</span>
+            </article>
+            <article>
+              <strong>3</strong>
+              <span>document sources</span>
+            </article>
+            <article>
+              <strong>1</strong>
+              <span>clear recovery plan</span>
+            </article>
+          </div>
+          <div class="hero-badges">
+            <span>Plain-language summary</span>
+            <span>Medication schedule</span>
+            <span>Warning signs</span>
+            <span>Follow-up checklist</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <p class="mini-label">Why it matters</p>
+          <h2>Patients often leave the hospital confused.</h2>
+          <p>
+            This assistant reduces readmission risk by helping patients
+            understand what happened, what to do next, and when to seek help.
+          </p>
+          <ul class="metric-list">
+            <li>
+              <strong>Target users</strong>
+              <span>Patients, caregivers, discharge coordinators</span>
+            </li>
+            <li>
+              <strong>Hackathon value</strong>
+              <span>High impact, easy demo, human-centered AI</span>
+            </li>
+            <li>
+              <strong>MVP promise</strong>
+              <span>From paperwork to action plan in seconds</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="panel input-panel">
+          <div class="panel-header">
+            <div>
+              <p class="mini-label">Step 1</p>
+              <h3>Paste discharge instructions</h3>
+            </div>
+            <button id="clear-all" class="text-btn">Clear</button>
+          </div>
+
+          <label class="field-label" for="patient-name">Patient name</label>
+          <input id="patient-name" type="text" placeholder="Maria Johnson" />
+
+          <label class="field-label" for="language">Preferred language</label>
+          <select id="language">
+            <option value="English">English</option>
+            <option value="Spanish">Spanish</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+
+          <div class="profile-grid">
+            <div>
+              <label class="field-label" for="patient-age">Age</label>
+              <input id="patient-age" type="number" min="0" placeholder="58" />
+            </div>
+            <div>
+              <label class="field-label" for="conditions">Conditions</label>
+              <input
+                id="conditions"
+                type="text"
+                placeholder="Asthma, diabetes, hypertension"
+              />
+            </div>
+          </div>
+
+          <label class="field-label" for="allergies">Allergies</label>
+          <input
+            id="allergies"
+            type="text"
+            placeholder="Penicillin, sulfa drugs, none known"
+          />
+
+          <label class="field-label" for="food-allergies">Food allergies</label>
+          <select id="has-food-allergy">
+            <option value="">Does the patient have a food allergy?</option>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+          <input
+            id="food-allergies"
+            type="text"
+            placeholder="Peanuts, shellfish, dairy, none known"
+          />
+
+          <div class="insurance-block">
+            <p class="mini-label">Contact Details</p>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="patient-phone">Patient phone</label>
+                <input
+                  id="patient-phone"
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="patient-email">Patient email</label>
+                <input
+                  id="patient-email"
+                  type="email"
+                  placeholder="patient@example.com"
+                />
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="caregiver-phone">Caregiver phone</label>
+                <input
+                  id="caregiver-phone"
+                  type="tel"
+                  placeholder="(555) 987-6543"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="caregiver-email">Caregiver email</label>
+                <input
+                  id="caregiver-email"
+                  type="email"
+                  placeholder="caregiver@example.com"
+                />
+              </div>
+            </div>
+            <label class="field-label" for="preferred-contact">Preferred contact method</label>
+            <select id="preferred-contact">
+              <option value="">Select preferred contact</option>
+              <option value="Phone">Phone</option>
+              <option value="Email">Email</option>
+              <option value="Caregiver phone">Caregiver phone</option>
+              <option value="Caregiver email">Caregiver email</option>
+            </select>
+          </div>
+
+          <div class="insurance-block">
+            <p class="mini-label">Emergency Contact</p>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="emergency-name">Contact name</label>
+                <input
+                  id="emergency-name"
+                  type="text"
+                  placeholder="Anita Johnson"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="emergency-relation">Relationship</label>
+                <input
+                  id="emergency-relation"
+                  type="text"
+                  placeholder="Daughter, spouse, friend"
+                />
+              </div>
+            </div>
+            <label class="field-label" for="emergency-phone">Emergency phone</label>
+            <input
+              id="emergency-phone"
+              type="tel"
+              placeholder="(555) 765-4321"
+            />
+          </div>
+
+          <div class="insurance-block">
+            <p class="mini-label">Insurance</p>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="insurance-plan">Plan name</label>
+                <select id="insurance-plan">
+                  <option value="">Select a plan</option>
+                  <option value="Blue Cross Blue Shield PPO">
+                    Blue Cross Blue Shield PPO
+                  </option>
+                  <option value="Aetna Choice POS II">
+                    Aetna Choice POS II
+                  </option>
+                  <option value="Cigna Open Access Plus">
+                    Cigna Open Access Plus
+                  </option>
+                  <option value="UnitedHealthcare Choice Plus">
+                    UnitedHealthcare Choice Plus
+                  </option>
+                  <option value="Kaiser Permanente HMO">
+                    Kaiser Permanente HMO
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="insurance-member-id">Member ID</label>
+                <input
+                  id="insurance-member-id"
+                  type="text"
+                  placeholder="ABC123456"
+                />
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="insurance-copay">Visit copay</label>
+                <input id="insurance-copay" type="text" placeholder="$30 primary care" />
+              </div>
+              <div>
+                <label class="field-label" for="insurance-deductible">Deductible</label>
+                <input id="insurance-deductible" type="text" placeholder="$1,500" />
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="insurance-phone">Insurance phone</label>
+                <input
+                  id="insurance-phone"
+                  type="tel"
+                  placeholder="(800) 555-0100"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="insurance-email">Insurance email</label>
+                <input
+                  id="insurance-email"
+                  type="email"
+                  placeholder="support@insurance.com"
+                />
+              </div>
+            </div>
+            <label class="field-label" for="insurance-address">Insurance address</label>
+            <input
+              id="insurance-address"
+              type="text"
+              placeholder="100 Insurance Plaza, Chicago, IL"
+            />
+            <label class="field-label" for="insurance-card-image">
+              Insurance card image (optional)
+            </label>
+            <input
+              id="insurance-card-image"
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+            />
+            <p id="insurance-image-status" class="upload-status">
+              No insurance card image selected
+            </p>
+          </div>
+
+          <div class="insurance-block">
+            <p class="mini-label">Care Network</p>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="doctor-name">Doctor name</label>
+                <input
+                  id="doctor-name"
+                  type="text"
+                  placeholder="Dr. Emily Carter"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="doctor-specialty">Specialty</label>
+                <input
+                  id="doctor-specialty"
+                  type="text"
+                  placeholder="Primary care, pulmonology"
+                />
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="doctor-phone">Doctor phone</label>
+                <input
+                  id="doctor-phone"
+                  type="tel"
+                  placeholder="(555) 222-1111"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="clinic-location">Clinic or hospital</label>
+                <input
+                  id="clinic-location"
+                  type="text"
+                  placeholder="Northside Medical Center"
+                />
+              </div>
+            </div>
+            <label class="field-label" for="prescribed-location">Prescribed location</label>
+            <input
+              id="prescribed-location"
+              type="text"
+              placeholder="ER discharge desk, inpatient floor, or clinic"
+            />
+
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="pharmacy-name">Pharmacy</label>
+                <select id="pharmacy-name">
+                  <option value="">Select a pharmacy</option>
+                  <option value="Walgreens">Walgreens</option>
+                  <option value="CVS Pharmacy">CVS Pharmacy</option>
+                  <option value="Walmart Pharmacy">Walmart Pharmacy</option>
+                  <option value="Rite Aid">Rite Aid</option>
+                  <option value="Costco Pharmacy">Costco Pharmacy</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="pharmacy-phone">Pharmacy phone</label>
+                <input
+                  id="pharmacy-phone"
+                  type="tel"
+                  placeholder="(555) 444-3333"
+                />
+              </div>
+            </div>
+            <label class="field-label" for="pharmacy-location">Pharmacy location</label>
+            <input
+              id="pharmacy-location"
+              type="text"
+              placeholder="123 Main St, Chicago, IL"
+            />
+
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="appointment-date">Next appointment date</label>
+                <input id="appointment-date" type="date" />
+              </div>
+              <div>
+                <label class="field-label" for="appointment-time">Appointment time</label>
+                <input id="appointment-time" type="time" />
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="appointment-department">Department</label>
+                <input
+                  id="appointment-department"
+                  type="text"
+                  placeholder="Primary care, pulmonology"
+                />
+              </div>
+              <div>
+                <label class="field-label" for="appointment-type">Visit type</label>
+                <select id="appointment-type">
+                  <option value="">Select visit type</option>
+                  <option value="In-person">In-person</option>
+                  <option value="Virtual">Virtual</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="insurance-block">
+            <p class="mini-label">Vitals and Labs</p>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="blood-pressure">Blood pressure</label>
+                <input id="blood-pressure" type="text" placeholder="128/82" />
+              </div>
+              <div>
+                <label class="field-label" for="heart-rate">Heart rate</label>
+                <input id="heart-rate" type="text" placeholder="78 bpm" />
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="oxygen-level">Oxygen level</label>
+                <input id="oxygen-level" type="text" placeholder="97%" />
+              </div>
+              <div>
+                <label class="field-label" for="temperature">Temperature</label>
+                <input id="temperature" type="text" placeholder="98.6 F" />
+              </div>
+            </div>
+            <label class="field-label" for="lab-report-image">
+              Lab report image (optional)
+            </label>
+            <input
+              id="lab-report-image"
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+            />
+            <p id="lab-image-status" class="upload-status">No lab report image selected</p>
+          </div>
+
+          <details class="insurance-block dropdown-block">
+            <summary class="dropdown-summary">
+              <span>Imaging Uploads</span>
+              <span class="dropdown-hint">Open</span>
+            </summary>
+            <div class="dropdown-content">
+              <label class="field-label" for="xray-image">X-ray image upload (optional)</label>
+              <input
+                id="xray-image"
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+              />
+              <p id="xray-image-status" class="upload-status">No X-ray image selected</p>
+
+              <label class="field-label" for="xray-report-image">
+                X-ray report upload (optional)
+              </label>
+              <input
+                id="xray-report-image"
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+              />
+              <p id="xray-report-status" class="upload-status">No X-ray report selected</p>
+            </div>
+          </details>
+
+          <div class="insurance-block">
+            <p class="mini-label">Symptoms</p>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="fever-symptom">Fever</label>
+                <select id="fever-symptom">
+                  <option value="">Select</option>
+                  <option value="None">None</option>
+                  <option value="Mild">Mild</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="Severe">Severe</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="pain-symptom">Pain</label>
+                <select id="pain-symptom">
+                  <option value="">Select</option>
+                  <option value="None">None</option>
+                  <option value="Mild">Mild</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="Severe">Severe</option>
+                </select>
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <label class="field-label" for="cough-symptom">Cough</label>
+                <select id="cough-symptom">
+                  <option value="">Select</option>
+                  <option value="None">None</option>
+                  <option value="Mild">Mild</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="Severe">Severe</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="breathing-symptom">Shortness of breath</label>
+                <select id="breathing-symptom">
+                  <option value="">Select</option>
+                  <option value="None">None</option>
+                  <option value="Mild">Mild</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="Severe">Severe</option>
+                </select>
+              </div>
+            </div>
+            <label class="field-label" for="fatigue-symptom">Fatigue</label>
+            <select id="fatigue-symptom">
+              <option value="">Select</option>
+              <option value="None">None</option>
+              <option value="Mild">Mild</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Severe">Severe</option>
+            </select>
+          </div>
+
+          <label class="field-label" for="discharge-text">Discharge text</label>
+          <textarea
+            id="discharge-text"
+            rows="14"
+            placeholder="Paste the discharge summary, medications, activity restrictions, diet instructions, and warning signs here."
+          ></textarea>
+
+          <label class="field-label" for="prescription-image">
+            Prescription image (optional)
+          </label>
+          <input
+            id="prescription-image"
+            type="file"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
+          />
+          <p id="image-status" class="upload-status">No prescription image selected</p>
+
+          <div class="input-actions">
+            <button id="analyze-main" class="primary-btn">Generate Care Plan</button>
+            <button id="load-example" class="ghost-btn">Use Demo Data</button>
+          </div>
+        </div>
+
+        <div class="panel output-panel">
+          <div class="panel-header">
+            <div>
+              <p class="mini-label">Step 2</p>
+              <h3>Patient-friendly plan</h3>
+            </div>
+            <div class="header-actions">
+              <span id="status-pill" class="status-pill">Waiting for input</span>
+              <button id="print-plan" class="ghost-btn small-btn">Print Plan</button>
+              <button id="speak-plan" class="ghost-btn small-btn">Read Aloud</button>
+              <button id="copy-summary" class="ghost-btn small-btn">Copy Summary</button>
+              <button id="download-summary" class="ghost-btn small-btn">Export PDF</button>
+            </div>
+          </div>
+
+          <section id="urgent-banner" class="urgent-banner muted">
+            No urgent alert yet. Generate a care plan to see the highest-priority warning.
+          </section>
+
+          <section class="disclaimer-strip">
+            Educational care support only. Confirm medicines, insurance coverage, imaging findings, and urgent symptoms with your clinician, pharmacist, or radiologist.
+          </section>
+
+          <section class="patient-dashboard">
+            <article class="dashboard-card">
+              <p class="card-label"><span class="label-icon">PT</span>Patient Snapshot</p>
+              <div id="dashboard-summary" class="card-content muted">
+                Generate a plan to see a quick patient summary.
+              </div>
+            </article>
+            <article class="dashboard-card warning-card">
+              <p class="card-label"><span class="label-icon">RS</span>Risk Status</p>
+              <div id="risk-output" class="card-content muted">
+                Risk status will appear here.
+              </div>
+            </article>
+            <article class="dashboard-card accent-card">
+              <p class="card-label"><span class="label-icon">NX</span>Top 3 Next Actions</p>
+              <div id="next-actions-output" class="card-content muted">
+                Generate a plan to see the most important next steps.
+              </div>
+            </article>
+            <article class="dashboard-card">
+              <p class="card-label"><span class="label-icon">SY</span>Symptom Review</p>
+              <div id="symptom-output" class="card-content muted">
+                Symptom analysis will appear here.
+              </div>
+            </article>
+          </section>
+
+          <section class="patient-dashboard care-team-dashboard">
+            <article class="dashboard-card accent-card">
+              <p class="card-label"><span class="label-icon">CT</span>Care Team</p>
+              <div id="care-team-output" class="card-content muted">
+                Doctor, pharmacy, insurance, and emergency support links will appear here.
+              </div>
+            </article>
+            <article class="dashboard-card">
+              <p class="card-label"><span class="label-icon">RP</span>Recovery Progress</p>
+              <div id="progress-output" class="card-content muted">
+                Generate a plan to see the recovery timeline at a glance.
+              </div>
+            </article>
+            <article class="dashboard-card warning-card">
+              <p class="card-label"><span class="label-icon">QD</span>Questions for Your Doctor</p>
+              <div id="doctor-questions-output" class="card-content muted">
+                Suggested questions will appear here.
+              </div>
+            </article>
+          </section>
+
+          <section class="patient-dashboard readmission-dashboard">
+            <article class="dashboard-card warning-card">
+              <p class="card-label"><span class="label-icon">RR</span>Readmission Risk</p>
+              <div id="readmission-score-output" class="card-content muted">
+                Generate a plan to see the readmission prevention score.
+              </div>
+            </article>
+            <article class="dashboard-card">
+              <p class="card-label"><span class="label-icon">CG</span>Care Gaps Detected</p>
+              <div id="care-gaps-output" class="card-content muted">
+                Missing follow-up, refill, support, and symptom gaps will appear here.
+              </div>
+            </article>
+            <article class="dashboard-card accent-card">
+              <p class="card-label"><span class="label-icon">PR</span>Prevention Actions</p>
+              <div id="readmission-actions-output" class="card-content muted">
+                Recommended next actions to reduce avoidable readmission will appear here.
+              </div>
+            </article>
+          </section>
+
+          <article class="result-card document-center-card">
+            <p class="card-label"><span class="label-icon">DC</span>Document Center</p>
+            <div id="document-center-output" class="card-content muted">
+              Upload status for patient documents will appear here.
+            </div>
+          </article>
+
+          <div class="output-grid">
+            <article class="result-card accent-card priority-card">
+              <p class="card-label"><span class="label-icon">SU</span>Summary</p>
+              <div id="summary-output" class="card-content muted">
+                Add discharge instructions and generate a care plan.
+              </div>
+            </article>
+
+            <article class="result-card accent-card priority-card">
+              <p class="card-label"><span class="label-icon">RM</span>Reminder Plan</p>
+              <div id="reminders-output" class="card-content muted">
+                Medication and follow-up reminders will appear here.
+              </div>
+            </article>
+
+            <article class="result-card accent-card">
+              <p class="card-label">Appointment Details</p>
+              <div id="appointment-output" class="card-content muted">
+                Follow-up appointment details will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Provider and Pharmacy Details</p>
+              <div id="provider-output" class="card-content muted">
+                Doctor, clinic, prescribed location, and pharmacy details will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label"><span class="label-icon">MD</span>Medicine Schedule</p>
+              <div id="medications-output" class="card-content muted">
+                Medication timing will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Follow-up Checklist</p>
+              <div id="followup-output" class="card-content muted">
+                Follow-up tasks will appear here.
+              </div>
+            </article>
+
+            <article class="result-card warning-card">
+              <p class="card-label"><span class="label-icon">AL</span>Call a Doctor If</p>
+              <div id="warnings-output" class="card-content muted">
+                Red-flag symptoms will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Daily Checklist</p>
+              <div id="checklist-output" class="card-content muted">
+                A daily recovery checklist will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Lifestyle Instructions</p>
+              <div id="lifestyle-output" class="card-content muted">
+                Diet and activity instructions will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Care Coordination</p>
+              <div id="coordination-output" class="card-content muted">
+                Patient, caregiver, doctor, and pharmacy coordination steps will appear here.
+              </div>
+            </article>
+
+            <article class="result-card warning-card">
+              <p class="card-label">Emergency Contact</p>
+              <div id="emergency-output" class="card-content muted">
+                Emergency contact and escalation instructions will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Caregiver Note</p>
+              <div id="caregiver-output" class="card-content muted">
+                A caregiver handoff note will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Prescription Insights</p>
+              <div id="prescription-output" class="card-content muted">
+                Prescription extraction will appear here.
+              </div>
+            </article>
+
+            <article class="result-card warning-card">
+              <p class="card-label">Safety Alerts</p>
+              <div id="safety-output" class="card-content muted">
+                Medication and risk alerts will appear here.
+              </div>
+            </article>
+
+            <article class="result-card accent-card">
+              <p class="card-label">Recovery Timeline</p>
+              <div id="timeline-output" class="card-content muted">
+                A day-by-day timeline will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Why These Alerts</p>
+              <div id="evidence-output" class="card-content muted">
+                Supporting reasons from the documents will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Missing Information</p>
+              <div id="missing-output" class="card-content muted">
+                Missing or unclear details will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Insurance Summary</p>
+              <div id="insurance-output" class="card-content muted">
+                Insurance plan details will appear here.
+              </div>
+            </article>
+
+            <article class="result-card warning-card">
+              <p class="card-label">Coverage Guidance</p>
+              <div id="coverage-output" class="card-content muted">
+                Likely coverage guidance will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Cost Watchouts</p>
+              <div id="cost-output" class="card-content muted">
+                Cost-related risks and next steps will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">Insurance Card Insights</p>
+              <div id="insurance-card-output" class="card-content muted">
+                Insurance card extraction and notes will appear here.
+              </div>
+            </article>
+
+            <article class="result-card accent-card">
+              <p class="card-label">Lab Report Insights</p>
+              <div id="lab-output" class="card-content muted">
+                Lab report findings in simple language will appear here.
+              </div>
+            </article>
+
+            <article class="result-card warning-card">
+              <p class="card-label">Vitals Review</p>
+              <div id="vitals-output" class="card-content muted">
+                Vitals interpretation and watchouts will appear here.
+              </div>
+            </article>
+
+            <article class="result-card accent-card">
+              <p class="card-label">Doctor Visit Prep</p>
+              <div id="doctor-prep-output" class="card-content muted">
+                Suggested questions and prep points for the next visit will appear here.
+              </div>
+            </article>
+
+            <article class="result-card">
+              <p class="card-label">X-ray Image Insights</p>
+              <div id="xray-image-output" class="card-content muted">
+                Educational X-ray image insights will appear here.
+              </div>
+            </article>
+
+            <article class="result-card accent-card">
+              <p class="card-label">X-ray Report Summary</p>
+              <div id="xray-report-output" class="card-content muted">
+                X-ray report findings in simple language will appear here.
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="qa-panel panel">
+        <div class="panel-header">
+          <div>
+            <p class="mini-label">Step 3</p>
+            <h3>Ask about the instructions</h3>
+          </div>
+          <span id="qa-status" class="status-pill">No question asked</span>
+        </div>
+        <label class="field-label" for="question-template">Suggested question</label>
+        <select id="question-template">
+          <option value="">Choose a common patient question</option>
+          <option value="Can I take these medicines with food?">
+            Can I take these medicines with food?
+          </option>
+          <option value="What symptoms mean I should call the doctor right away?">
+            What symptoms mean I should call the doctor right away?
+          </option>
+          <option value="When is my next follow-up and what should I bring?">
+            When is my next follow-up and what should I bring?
+          </option>
+          <option value="What should I do if I miss a dose of my medicine?">
+            What should I do if I miss a dose of my medicine?
+          </option>
+          <option value="Which part of my care plan is most important today?">
+            Which part of my care plan is most important today?
+          </option>
+          <option value="Are there any warning signs that mean I should go to the ER?">
+            Are there any warning signs that mean I should go to the ER?
+          </option>
+          <option value="What should I ask my pharmacist about these medicines?">
+            What should I ask my pharmacist about these medicines?
+          </option>
+          <option value="What care gaps do I still need to complete before recovery is on track?">
+            What care gaps do I still need to complete before recovery is on track?
+          </option>
+        </select>
+        <label class="field-label" for="patient-question">Patient question</label>
+        <textarea
+          id="patient-question"
+          rows="4"
+          placeholder="Can I take this medicine with food? What symptoms mean I should go back to the ER?"
+        ></textarea>
+        <div class="input-actions">
+          <button id="ask-question" class="ghost-btn">Ask Assistant</button>
+        </div>
+        <article class="result-card">
+          <p class="card-label">Answer</p>
+          <div id="qa-answer" class="card-content muted">
+            Ask a question after loading discharge text or a prescription image.
+          </div>
+        </article>
+      </section>
+
+      <section class="pitch-strip">
+        <div>
+          <p class="mini-label">Judge Pitch</p>
+          <h3>We make discharge instructions understandable, actionable, and safer.</h3>
+        </div>
+        <p>
+          Discharge Clarity Assistant helps patients leave the hospital with a
+          clear plan, not a packet they cannot decode.
+        </p>
+      </section>
+    </main>
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

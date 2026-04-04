@@ -1,0 +1,9 @@
+{
+  "name": "discharge-clarity-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hackathon MVP with real OpenAI-powered discharge summarization",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
