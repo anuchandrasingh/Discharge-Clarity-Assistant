@@ -2,6 +2,11 @@
 
 Discharge Clarity Assistant is a hackathon-ready MVP for healthcare AI. It converts dense hospital discharge instructions into a simple, patient-friendly care plan using the OpenAI Responses API.
 
+## Links
+
+- Live Prototype: https://discharge-clarity-assistant.onrender.com
+- YouTube Demo: https://www.youtube.com/watch?v=yqRhgtrM7QY
+
 ## What it does
 
 - Summarizes discharge information in plain language
