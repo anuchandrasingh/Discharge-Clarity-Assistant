@@ -1,0 +1,53 @@
+{
+  "experiment": {
+    "title": "Phase 2 - Scrum Project Planning",
+    "project": "GenAI-Assisted Personalized LMS",
+    "model": "claude-haiku-4-5",
+    "framework": "AutoGen (pyautogen v0.3.2) - GroupChat",
+    "speaker_selection": "round_robin",
+    "date": "2026-04-07T13:40:35.924789",
+    "total_estimated_tokens": 5407,
+    "total_time_seconds": 0.08
+  },
+  "agents": [
+    {
+      "name": "Product_Owner",
+      "estimated_tokens": 799,
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "name": "Scrum_Master",
+      "estimated_tokens": 773,
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "name": "Business_Analyst",
+      "estimated_tokens": 759,
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "name": "UI_UX_Designer",
+      "estimated_tokens": 770,
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "name": "Developer",
+      "estimated_tokens": 761,
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "name": "QA_Engineer",
+      "estimated_tokens": 778,
+      "model": "claude-haiku-4-5"
+    },
+    {
+      "name": "DevOps_Engineer",
+      "estimated_tokens": 767,
+      "model": "claude-haiku-4-5"
+    }
+  ],
+  "groupchat": {
+    "total_messages": 8,
+    "max_round": 8
+  }
+}
